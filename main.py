@@ -78,3 +78,71 @@ st.plotly_chart(fig2, use_container_width=True)
 
 # '이 그래프로 알 수 있는 것' 안내 구역
 st.info("💡 **이 그래프로 알 수 있는 것:** 전체 흥행 관객수에서 특정 장르 및 개별 영화가 차지하는 비중과 규모를 한눈에 파악할 수 있습니다.")
+
+st.markdown("---")
+
+# ---------------------------------------------------------
+# 세 번째 그래프 구역: 총 관객수 분포 (히스토그램)
+# ---------------------------------------------------------
+st.subheader("3. 총 관객수 분포 (히스토그램)")
+
+# Plotly 히스토그램 생성
+fig3 = px.histogram(
+    data, 
+    x='total_audi', 
+    nbins=30,
+    title="영화별 총 관객수 분포 히스토그램",
+    labels={'total_audi': '총 관객수(명)'},
+    hover_data=['movieNm']
+)
+fig3.update_layout(yaxis_title="영화 수")
+
+st.plotly_chart(fig3, use_container_width=True)
+
+# 동적 연산: 가장 관객수가 많은 영화 및 관객수 추출
+top_movie = data.loc[data['total_audi'].idxmax()]
+top_movie_name = top_movie['movieNm']
+top_movie_audi = top_movie['total_audi']
+
+# '이 그래프로 알 수 있는 것' 안내 구역 (밀집 구간 및 최다 관객 영화 표기)
+st.info(
+    f"💡 **이 그래프로 알 수 있는 것:** 대부분의 영화는 총 관객수 100만~200만 명대 이하의 하위 구간에 밀집해 있으며, "
+    f"가장 관객 수가 많은 영화는 **'{top_movie_name}'**(총 {top_movie_audi:,}명)입니다."
+)
+
+st.markdown("---")
+
+# ---------------------------------------------------------
+# 네 번째 그래프 구역: 개봉일 스크린수 vs 총 관객수 (산점도)
+# ---------------------------------------------------------
+st.subheader("4. 개봉일 스크린수와 총 관객수의 관계 (산점도)")
+
+# Plotly 산점도 생성 (x축: 개봉일 스크린수, y축: 총 관객수, 색상: 장르)
+fig4 = px.scatter(
+    data,
+    x='first_scrn',
+    y='total_audi',
+    color='genre',
+    hover_name='movieNm',
+    title="개봉일 스크린수 vs 총 관객수 산점도",
+    labels={
+        'first_scrn': '개봉일 스크린수(개)',
+        'total_audi': '총 관객수(명)',
+        'genre': '장르'
+    },
+    hover_data={
+        'first_scrn': ':,d',
+        'total_audi': ':,d',
+        'genre': True
+    }
+)
+
+# 호버 템플릿 설정
+fig4.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br>장르: %{customdata[2]}<br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<extra></extra>"
+)
+
+st.plotly_chart(fig4, use_container_width=True)
+
+# '이 그래프로 알 수 있는 것' 안내 구역
+st.info("💡 **이 그래프로 알 수 있는 것:** 개봉일 스크린수가 많을수록 대체로 총 관객수도 증가하는 양의 상관관계를 보이는지, 장르별로 스크린 확보 및 관객 동원력의 차이가 존재하는지 확인할 수 있습니다.")
