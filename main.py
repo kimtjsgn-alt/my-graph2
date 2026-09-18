@@ -13,8 +13,8 @@ def load_data():
     url = "https://raw.githubusercontent.com/greatsong/modudata/main/data/kobis_movies.csv"
     df = pd.read_csv(url)
     
-    # 장르가 세로막대 기호(|)로 묶여 있는 경우 첫 번째 장르만 추출
-    df['genre'] = df['genre'].astype(str).apply(lambda x: x.split('|')[0] if '|' in x else x)
+    # 장르가 세로막대 기호(|)로 묶여 있는 경우 첫 번째 장르만 추출 (.str 메서드로 오류 방지)
+    df['genre'] = df['genre'].astype(str).str.split('|').str[0]
     
     return df
 
@@ -218,7 +218,7 @@ fig6 = px.scatter(
 
 # 호버 템플릿 설정
 fig6.update_traces(
-    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<br>개봉 첫 주 관객수: %{marker.size:,}명<extra></extra>"
+    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<br>개봉 첫 주 관객수: %{customdata[2]:,}명<extra></extra>"
 )
 
 st.plotly_chart(fig6, use_container_width=True)
