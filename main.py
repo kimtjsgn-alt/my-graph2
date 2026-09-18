@@ -244,7 +244,7 @@ with st.container():
 st.write("---")
 st.subheader("7. 제작 국가 및 장르별 영화 편수 (선버스트)")
 
-# 제작 국가 및 장르별 영화 편수 집계 (계층 데이터 명확화)
+# 제작 국가 및 장르별 영화 편수 집계
 sunburst_df = df.groupby(['nation', 'genre']).size().reset_index(name='count')
 
 # 선버스트 차트 생성
@@ -270,28 +270,29 @@ with st.container():
 
 
 # -------------------------------------------------------------------
-# 그래프 8: 어떤 장르가 총 관객 수가 많은지 알려 (장르별 총 관객 수 산점도)
+# 그래프 8: 장르별 총 관객 수 산점도
 # -------------------------------------------------------------------
 st.write("---")
-st.subheader("8. 어떤 장르가 총 관객 수가 많은지 알려")
+question_title = "어떤 장르가 총 관객 수가 많은지 알려줘"
+st.subheader(f"8. {question_title}")
 
-# Plotly 산점도 생성
+# Plotly 산점도 생성 (가로축: 장르, 세로축: 총 관객)
 fig8 = px.scatter(
     df,
     x='genre',
     y='total_audi',
     color='genre',
     hover_name='movieNm',
-    title="어떤 장르가 총 관객 수가 많은지 알려",
+    title=question_title,
     labels={
         'genre': '장르',
         'total_audi': '총 관객 수(명)'
     }
 )
 
-# 마우스 호버 시 영화명, 장르, 총 관객 수 표시
+# 마우스 호버 시 영화명과 총 관객 수 표시
 fig8.update_traces(
-    hovertemplate="<b>%{hovertext}</b><br>장르: %{x}<br>총 관객 수: %{y:,.0f}명<extra></extra>"
+    hovertemplate="<b>%{hovertext}</b><br>총 관객 수: %{y:,.0f}명<extra></extra>"
 )
 
 st.plotly_chart(fig8, use_container_width=True)
@@ -300,4 +301,4 @@ st.plotly_chart(fig8, use_container_width=True)
 st.divider()
 with st.container():
     st.markdown("💡 **이 그래프로 알 수 있는 것**")
-    st.info("각 장르별 개별 영화들의 관객 수 분포 위치를 직접 확인하여, 관객 수가 높은 개별 흥행작이 많이 속한 장르와 전반적인 관객 수 분포 수준을 직관적으로 비교할 수 있습니다.")
+    st.info("각 장르별 개별 영화들의 관객 수 개별 위치와 분포 높이를 직관적으로 확인할 수 있어, 어떤 장르에 대형 흥행작이 많이 위치해 있는지 한눈에 비교할 수 있습니다.")
