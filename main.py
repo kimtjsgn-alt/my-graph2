@@ -62,14 +62,13 @@ st.subheader("2. 장르 및 영화별 총 관객수 분포 (트리맵)")
 # Plotly 트리맵 생성 (계층 구조: 장르 -> 영화명, 사각형 크기: 총 관객수)
 fig2 = px.treemap(
     data,
-    path=[px.Constant("전체 영화"), 'genre', 'movieNm'],
+    path=['genre', 'movieNm'],
     values='total_audi',
     color='genre',
-    title="장르 및 영화별 총 관객수 트리맵",
-    hover_data={'total_audi': ':,d'}
+    title="장르 및 영화별 총 관객수 트리맵"
 )
 
-# 마우스 호버 툴팁 설정 (영화명과 총 관객수 표시)
+# 마우스 호버 툴팁 설정 (영화명/장르명과 총 관객수 표시)
 fig2.update_traces(
     hovertemplate="<b>%{label}</b><br>총 관객수: %{value:,}명<extra></extra>"
 )
@@ -139,7 +138,7 @@ fig4 = px.scatter(
 
 # 호버 템플릿 설정
 fig4.update_traces(
-    hovertemplate="<b>%{hovertext}</b><br>장르: %{customdata[2]}<br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<extra></extra>"
+    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<extra></extra>"
 )
 
 st.plotly_chart(fig4, use_container_width=True)
@@ -218,7 +217,7 @@ fig6 = px.scatter(
 
 # 호버 템플릿 설정
 fig6.update_traces(
-    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<br>개봉 첫 주 관객수: %{customdata[2]:,}명<extra></extra>"
+    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,}개<br>총 관객수: %{y:,}명<extra></extra>"
 )
 
 st.plotly_chart(fig6, use_container_width=True)
@@ -233,7 +232,7 @@ st.markdown("---")
 # ---------------------------------------------------------
 st.subheader("7. 제작 국가 및 장르별 영화 편수 분포 (선버스트)")
 
-# 계층 구조 생성: 전체 영화 -> nation -> genre
+# 계층 구조 생성: nation -> genre
 fig7 = px.sunburst(
     data,
     path=['nation', 'genre'],
