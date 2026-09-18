@@ -267,3 +267,37 @@ st.divider()
 with st.container():
     st.markdown("💡 **이 그래프로 알 수 있는 것**")
     st.info("국가별로 주로 제작/수입되는 영화 장르의 다변화 수준과 비중을 중앙에서 외곽으로 확장되는 동심원 계층 구조를 통해 한눈에 비교할 수 있습니다.")
+
+
+# -------------------------------------------------------------------
+# 그래프 8: 어떤 장르가 총 관객 수가 많은지 알려 (장르별 총 관객 수 산점도)
+# -------------------------------------------------------------------
+st.write("---")
+st.subheader("8. 어떤 장르가 총 관객 수가 많은지 알려")
+
+# Plotly 산점도 생성
+fig8 = px.scatter(
+    df,
+    x='genre',
+    y='total_audi',
+    color='genre',
+    hover_name='movieNm',
+    title="어떤 장르가 총 관객 수가 많은지 알려",
+    labels={
+        'genre': '장르',
+        'total_audi': '총 관객 수(명)'
+    }
+)
+
+# 마우스 호버 시 영화명, 장르, 총 관객 수 표시
+fig8.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br>장르: %{x}<br>총 관객 수: %{y:,.0f}명<extra></extra>"
+)
+
+st.plotly_chart(fig8, use_container_width=True)
+
+# 구분선 및 알 수 있는 점 작성 구역
+st.divider()
+with st.container():
+    st.markdown("💡 **이 그래프로 알 수 있는 것**")
+    st.info("각 장르별 개별 영화들의 관객 수 분포 위치를 직접 확인하여, 관객 수가 높은 개별 흥행작이 많이 속한 장르와 전반적인 관객 수 분포 수준을 직관적으로 비교할 수 있습니다.")
