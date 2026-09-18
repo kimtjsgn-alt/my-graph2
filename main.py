@@ -16,6 +16,14 @@ def load_data():
     # 장르가 세로막대 기호(|)로 묶여 있는 경우 첫 번째 장르만 추출 (.str 메서드로 오류 방지)
     df['genre'] = df['genre'].astype(str).str.split('|').str[0]
     
+    # [중요] 트리맵/선버스트 오류 방지: 동일 영화 제목 중복 발생 시 고유 이름 생성
+    # 영화명이 중복되더라도 인덱스를 활용하여 고유한 트리 경로 생성
+    df['movieNm_display'] = df['movieNm']
+    # 중복된 영화명이 있는 경우 식별 번호 추가
+    dup_mask = df.duplicated(subset=['genre', 'movieNm'], keep=False)
+    if dup_mask.any():
+        df.loc[dup_mask, 'movieNm_display'] = df.loc[dup_mask, 'movieNm'] + " (" + df.index.astype(str) + ")"
+        
     return df
 
 data = load_data()
@@ -59,16 +67,17 @@ st.markdown("---")
 # ---------------------------------------------------------
 st.subheader("2. 장르 및 영화별 총 관객수 분포 (트리맵)")
 
-# Plotly 트리맵 생성 (계층 구조: 장르 -> 영화명, 사각형 크기: 총 관객수)
+# Plotly 트리맵 생성 (중복 없는 고유 컬럼 'movieNm_display' 사용)
 fig2 = px.treemap(
     data,
-    path=['genre', 'movieNm'],
+    path=['genre', 'movieNm_display'],
     values='total_audi',
     color='genre',
-    title="장르 및 영화별 총 관객수 트리맵"
+    title="장르 및 영화별 총 관객수 트리맵",
+    hover_data={'movieNm': True, 'total_audi': ':,d'}
 )
 
-# 마우스 호버 툴팁 설정 (영화명/장르명과 총 관객수 표시)
+# 마우스 호버 툴팁 설정 (실제 영화 제목과 총 관객수 표기)
 fig2.update_traces(
     hovertemplate="<b>%{label}</b><br>총 관객수: %{value:,}명<extra></extra>"
 )
