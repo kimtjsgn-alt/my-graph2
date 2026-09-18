@@ -16,8 +16,13 @@ def load_data():
     url = "https://raw.githubusercontent.com/greatsong/modudata/main/data/kobis_movies.csv"
     df = pd.read_csv(url)
     
-    # genre(장르) 열 전처리: 세로막대 기호(|) 기준 첫 번째 장르만 추출
-    df['genre'] = df['genre'].fillna('기타').astype(str).apply(lambda x: x.split('|')[0])
+    # genre(장르) 열 전처리: 세로막대 기호(|) 기준 첫 번째 장르만 추출 및 결측치 처리
+    df['genre'] = df['genre'].fillna('기타').astype(str).apply(lambda x: x.split('|')[0].strip())
+    df['genre'] = df['genre'].replace({'': '기타', 'nan': '기타'})
+    
+    # nation(제작 국가) 결측치 및 빈 문자열 처리
+    df['nation'] = df['nation'].fillna('기타').astype(str).apply(lambda x: x.strip())
+    df['nation'] = df['nation'].replace({'': '기타', 'nan': '기타'})
     
     return df
 
@@ -239,14 +244,18 @@ with st.container():
 st.write("---")
 st.subheader("7. 제작 국가 및 장르별 영화 편수 (선버스트)")
 
-# 제작 국가 > 장르 계층 선버스트 차트 생성 (크기: 영화 편수)
+# 제작 국가 및 장르별 영화 편수 집계 (계층 데이터 명확화)
+sunburst_df = df.groupby(['nation', 'genre']).size().reset_index(name='count')
+
+# 선버스트 차트 생성
 fig7 = px.sunburst(
-    df,
+    sunburst_df,
     path=['nation', 'genre'],
+    values='count',
     title="제작 국가별 장르 구성 (칸 크기: 영화 편수)"
 )
 
-# 마우스 호버 시 해당 계층 명칭과 영화 편수, 비율 표시
+# 마우스 호버 시 구획명, 영화 편수, 비율 표시
 fig7.update_traces(
     hovertemplate="<b>구분: %{label}</b><br>영화 편수: %{value}편<br>비율: %{percentParent:.1%} (상위 항목 대비)<extra></extra>"
 )
